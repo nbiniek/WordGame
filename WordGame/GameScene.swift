@@ -9,37 +9,53 @@
 import SpriteKit
 
 class GameScene: SKScene {
+    
+    var myLabel: SKLabelNode!
+    var field1: AnswerField!
+    var field2: AnswerField!
+    var field3: AnswerField!
+    
+    override init(size: CGSize) {
+        super.init(size: size)
+        
+        myLabel = SKLabelNode(fontNamed:"Arial")
+        myLabel.text = "Guess the word!"
+        myLabel.fontSize = 30
+        myLabel.position = CGPoint(x: self.size.width/2.0, y: self.size.height/2.0)
+        self.addChild(myLabel)
+        
+        field1 = AnswerField(screenSize: self.size, fieldHeight: (1.0/7.0), text: "GOOGLE")
+        field2 = AnswerField(screenSize: self.size, fieldHeight: (3.0/14.0), text: "")
+        field3 = AnswerField(screenSize: self.size, fieldHeight: (2.0/7.0), text: "FINISH")
+        
+        field1.setNewAnswer("GOOGLE")
+        field2.setNewAnswer("CHROME")
+        field3.setNewAnswer("FINISH")
+        
+        field2.addHintNum()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
-        let myLabel = SKLabelNode(fontNamed:"Chalkduster")
-        myLabel.text = "Hello, World!"
-        myLabel.fontSize = 45
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
-        
-        self.addChild(myLabel)
+        self.view!.addSubview(field1)
+        self.view!.addSubview(field2)
+        self.view!.addSubview(field3)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
        /* Called when a touch begins */
-        
-        for touch in touches {
-            let location = touch.locationInNode(self)
-            
-            let sprite = SKSpriteNode(imageNamed:"Spaceship")
-            
-            sprite.xScale = 0.5
-            sprite.yScale = 0.5
-            sprite.position = location
-            
-            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            
-            sprite.runAction(SKAction.repeatActionForever(action))
-            
-            self.addChild(sprite)
-        }
     }
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+        if(field2.isCorrect() && !field2.editing) {
+            myLabel.text = "Correct!"
+        } else if(field2.editing) {
+            myLabel.text = "Guess the word!"
+        }
+        
     }
 }
