@@ -24,13 +24,9 @@ class GameScene: SKScene {
         myLabel.position = CGPoint(x: self.size.width/2.0, y: self.size.height/2.0)
         self.addChild(myLabel)
         
-        field1 = AnswerField(screenSize: self.size, fieldHeight: (1.0/7.0), text: "GOOGLE")
-        field2 = AnswerField(screenSize: self.size, fieldHeight: (3.0/14.0), text: "")
-        field3 = AnswerField(screenSize: self.size, fieldHeight: (2.0/7.0), text: "FINISH")
-        
-        field1.setNewAnswer("GOOGLE")
-        field2.setNewAnswer("CHROME")
-        field3.setNewAnswer("FINISH")
+        field1 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (1.0/7.0), endField: true, answer: "GOOGLE")
+        field2 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (3.0/14.0), endField: false, answer: "CHROME")
+        field3 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (2.0/7.0), endField: true, answer: "FINISH")
         
         field2.addHintNum()
     }
@@ -56,6 +52,5 @@ class GameScene: SKScene {
         } else if(field2.editing) {
             myLabel.text = "Guess the word!"
         }
-        
     }
 }

@@ -10,13 +10,20 @@ import UIKit
 
 class AnswerField: UITextField, UITextFieldDelegate {
     
+    let defaultText = ""
+    
     var answer: String = ""
     var hintNum: Int = 0
     
-    init(screenSize: CGSize, fieldHeight: CGFloat, text: String) {
-        super.init(frame: CGRect(x: screenSize.width/2.0 - 125, y: screenSize.height * fieldHeight, width: 250, height: 30))
+    init(x: CGFloat, y: CGFloat, endField: Bool, answer: String) {
+        super.init(frame: CGRect(x: x, y: y, width: 250, height: 30))
         
-        self.text = text
+        self.answer = answer
+        if(endField) {
+            self.text = answer
+        } else {
+            self.text = defaultText
+        }
         self.borderStyle = UITextBorderStyle.RoundedRect
         self.backgroundColor = UIColor.lightGrayColor()
         self.keyboardType = UIKeyboardType.Alphabet
@@ -31,7 +38,7 @@ class AnswerField: UITextField, UITextFieldDelegate {
     func setNewAnswer(answer: String) {
         self.answer = answer
     }
-    func addHintNum() -> Bool { // TO BE IMPLEMENTED: control hint num so as to not exceed word length
+    func addHintNum() -> Bool { // TO BE IMPLEMENTED: control hintNum so as to not exceed word length
         hintNum += 1
         return true
     }
