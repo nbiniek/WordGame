@@ -11,6 +11,8 @@ import SpriteKit
 class GameScene: SKScene {
     
     var myLabel: SKLabelNode!
+    var countdown: Countdown!
+
     var field1: AnswerField!
     var field2: AnswerField!
     var field3: AnswerField!
@@ -24,11 +26,15 @@ class GameScene: SKScene {
         myLabel.position = CGPoint(x: self.size.width/2.0, y: self.size.height/2.0)
         self.addChild(myLabel)
         
+        let countdown = Countdown(screenSize: self.size)
+        self.addChild(countdown)
+        
         field1 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (1.0/7.0), endField: true, answer: "GOOGLE")
         field2 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (3.0/14.0), endField: false, answer: "CHROME")
         field3 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (2.0/7.0), endField: true, answer: "FINISH")
         
         field2.addHintNum()
+        countdown.countdown(3)
     }
     
     required init?(coder aDecoder: NSCoder) {
