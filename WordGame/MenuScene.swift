@@ -25,13 +25,12 @@ class MenuScene: SKScene {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesBegan(touches, withEvent: event)
         
         if let location = touches.first?.locationInNode(self) {
             let touchedNode = nodeAtPoint(location)
             
             if touchedNode.name == "Play" {
-                let transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
+                let transition = SKTransition.revealWithDirection(.Down, duration: 0.5)
                 
                 let nextScene = GameScene(size: scene!.size)
                 nextScene.scaleMode = .AspectFill

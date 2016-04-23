@@ -10,22 +10,27 @@ import UIKit
 
 class AnswerField: UITextField, UITextFieldDelegate {
     
-    let defaultText = ""
-    
+    var disabled: Bool = false
     var answer: String = ""
+    var textShown: String = ""
     var hintNum: Int = 0
+ 
     
-    init(x: CGFloat, y: CGFloat, endField: Bool, answer: String) {
+    init(x: CGFloat, y: CGFloat, topOrBottomField: Bool, answer: String) {
         super.init(frame: CGRect(x: x, y: y, width: 250, height: 30))
         
+        // field logic setup //
+        disabled = topOrBottomField
         self.answer = answer
-        if(endField) {
-            self.text = answer
-        } else {
-            self.text = defaultText
-        }
+        if topOrBottomField { textShown = answer }
+        else { textShown = "" }
+        self.text = textShown
+        
+        // style setup //
         self.borderStyle = UITextBorderStyle.RoundedRect
         self.backgroundColor = UIColor.lightGrayColor()
+        
+        // etc setup //
         self.keyboardType = UIKeyboardType.Alphabet
         self.autocapitalizationType = UITextAutocapitalizationType.AllCharacters
         self.delegate = self
@@ -34,40 +39,40 @@ class AnswerField: UITextField, UITextFieldDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    func setNewAnswer(answer: String) {
-        self.answer = answer
-    }
-    func addHintNum() -> Bool { // TO BE IMPLEMENTED: control hintNum so as to not exceed word length
+    
+    func getHint() {
         hintNum += 1
-        return true
+        textShown = String(answer[answer.startIndex]) // TO BE IMPLEMENTED: return more than one letter hint
     }
-    func getHint() -> String { // TO BE IMPLEMENTED: return more than one letter hint
-        return String(answer[answer.startIndex])
-    }
+    
     func isCorrect() -> Bool {
         return self.text == self.answer
     }
     
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
-        if(!isCorrect()) {
-            textField.text = self.getHint()
+        // called when textField is touched //
+        if !disabled {
+            getHint()
+            self.text = textShown
         }
-        return !isCorrect()
+        
+        return !disabled
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
+        // called when textField's return is touched //
         textField.resignFirstResponder()
         return false
     }
     
     func textFieldDidEndEditing(textField: UITextField) {
+        // called when textField ends editing //
         if isCorrect() {
             print("correct")
+            disabled = true
         } else {
-            self.addHintNum()
-            textField.text = self.getHint()
             print("wrong")
+            self.text = textShown
         }
     }
 }

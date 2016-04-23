@@ -10,7 +10,8 @@ import SpriteKit
 
 class GameScene: SKScene {
     
-    var myLabel: SKLabelNode!
+    var titleLabel: SKLabelNode!
+    var menuLabel: SKLabelNode!
     var countdown: Countdown!
 
     var field1: AnswerField!
@@ -20,21 +21,24 @@ class GameScene: SKScene {
     override init(size: CGSize) {
         super.init(size: size)
         
-        myLabel = SKLabelNode(fontNamed:"Arial")
-        myLabel.text = "Guess the word!"
-        myLabel.fontSize = 30
-        myLabel.position = CGPoint(x: self.size.width/2.0, y: self.size.height/2.0)
-        self.addChild(myLabel)
+        titleLabel = SKLabelNode(fontNamed:"Arial")
+        titleLabel.text = "Guess the word!"
+        titleLabel.fontSize = 30
+        titleLabel.position = CGPoint(x: self.size.width/2.0, y: self.size.height/2.0)
+        self.addChild(titleLabel)
         
-        let countdown = Countdown(screenSize: self.size)
-        self.addChild(countdown)
+        menuLabel = SKLabelNode(fontNamed: "Arial")
+        menuLabel.name = "Menu"
+        menuLabel.text = "Menu"
+        menuLabel.fontSize = 24
+        menuLabel.position = CGPoint(x: self.size.width * 0.75, y: self.size.height * 0.9)
+        self.addChild(menuLabel)
         
-        field1 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (1.0/7.0), endField: true, answer: "GOOGLE")
-        field2 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (3.0/14.0), endField: false, answer: "CHROME")
-        field3 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (2.0/7.0), endField: true, answer: "FINISH")
+        field1 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (1.0/7.0), topOrBottomField: true, answer: "GOOGLE")
+        field2 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (3.0/14.0), topOrBottomField: false, answer: "CHROME")
+        field3 = AnswerField(x: self.size.width/2.0 - 125, y: self.size.height * (2.0/7.0), topOrBottomField: true, answer: "FINISH")
         
-        field2.addHintNum()
-        countdown.countdown(3)
+        loadScreen(3)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -42,21 +46,55 @@ class GameScene: SKScene {
     }
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
-        self.view!.addSubview(field1)
-        self.view!.addSubview(field2)
-        self.view!.addSubview(field3)
+        view.addSubview(field1)
+        view.addSubview(field2)
+        view.addSubview(field3)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
        /* Called when a touch begins */
+        if let location = touches.first?.locationInNode(self) {
+            let touchedNode = nodeAtPoint(location)
+            
+            if touchedNode.name == "Menu" {
+                openMenu()
+            }
+        }
+    }
+    
+    override func willMoveFromView(view: SKView) {
+        field1.removeFromSuperview()
+        field2.removeFromSuperview()
+        field3.removeFromSuperview()
+    }
+    
+    func openMenu() {        
+        let nextScene = MenuScene(size: scene!.size)
+        nextScene.scaleMode = .AspectFill
+        
+        scene?.view?.presentScene(nextScene)
+    }
+    
+    func loadScreen(seconds: Int) {
+        countdown = Countdown(screenSize: self.size)
+        self.addChild(countdown)
+        field1.hidden = true
+        field2.hidden = true
+        field3.hidden = true
+        countdown.countdown(seconds)
     }
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+        if(countdown.isFinished()) {
+            field1.hidden = false
+            field2.hidden = false
+            field3.hidden = false
+        }
         if(field2.isCorrect() && !field2.editing) {
-            myLabel.text = "Correct!"
+            titleLabel.text = "Correct!"
         } else if(field2.editing) {
-            myLabel.text = "Guess the word!"
+            titleLabel.text = "Guess the word!"
         }
     }
 }
