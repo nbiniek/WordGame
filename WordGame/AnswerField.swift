@@ -40,9 +40,15 @@ class AnswerField: UITextField, UITextFieldDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func getHint() {
+    func addHint() {
         hintNum += 1
-        textShown = String(answer[answer.startIndex]) // TO BE IMPLEMENTED: return more than one letter hint
+        
+        // substring range setup //
+        let startIndex = answer.startIndex
+        let endIndex = answer.endIndex.advancedBy(-(answer.characters.count-hintNum))
+        let range = startIndex..<endIndex
+        
+        textShown = answer.substringWithRange( range )
     }
     
     func isCorrect() -> Bool {
@@ -52,7 +58,7 @@ class AnswerField: UITextField, UITextFieldDelegate {
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
         // called when textField is touched //
         if !disabled {
-            getHint()
+            addHint()
             self.text = textShown
         }
         
@@ -68,10 +74,8 @@ class AnswerField: UITextField, UITextFieldDelegate {
     func textFieldDidEndEditing(textField: UITextField) {
         // called when textField ends editing //
         if isCorrect() {
-            print("correct")
             disabled = true
         } else {
-            print("wrong")
             self.text = textShown
         }
     }
